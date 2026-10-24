@@ -134,6 +134,10 @@ function VideoConferenceComponent(props: {
         : [VideoPresets.h540, VideoPresets.h216],
       red: !e2eeEnabled,
       videoCodec,
+      // POC: game-streaming screen share. One high layer, 60fps, keep framerate under pressure.
+      screenShareEncoding: { maxBitrate: 6_000_000, maxFramerate: 60 },
+      screenShareSimulcastLayers: [],
+      degradationPreference: 'maintain-framerate',
     };
     return {
       videoCaptureDefaults: videoCaptureDefaults,
@@ -149,6 +153,26 @@ function VideoConferenceComponent(props: {
   }, [props.userChoices, props.options.hq, props.options.codec]);
 
   const room = React.useMemo(() => new Room(roomOptions), []);
+
+  // POC hack: VideoConference's control bar doesn't expose screen-share capture options,
+  // and livekit-client otherwise defaults capture to 15fps. Wrap the call it makes.
+  React.useEffect(() => {
+    const lp = room.localParticipant;
+    const orig = lp.setScreenShareEnabled.bind(lp);
+    lp.setScreenShareEnabled = (enabled, opts, pubOpts) =>
+      orig(
+        enabled,
+        {
+          ...opts,
+          resolution: { width: 1280, height: 720, frameRate: 60 },
+          contentHint: 'motion',
+        },
+        pubOpts,
+      );
+    return () => {
+      lp.setScreenShareEnabled = orig;
+    };
+  }, [room]);
 
   React.useEffect(() => {
     if (e2eeEnabled) {

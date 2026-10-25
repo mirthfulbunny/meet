@@ -133,6 +133,14 @@ h2 a {
   transition-delay: 0s;
 }
 
+/* Upstream crops landscape cameras to fill the tile (`object-fit: cover`) and only fits screen
+   shares and portrait cameras. Fit everything, so an OBS virtual camera used as a screen share
+   isn't cropped. Doubled class to outrank the upstream rules, which load after this file. */
+.lk-participant-tile .lk-participant-media-video.lk-participant-media-video {
+  object-fit: contain;
+  background-color: var(--lk-bg2);
+}
+
 /* Control-bar popup menus (lib/BarMenu.tsx): screen-share settings, hidden tiles, volume. */
 .bar-menu {
   position: relative;

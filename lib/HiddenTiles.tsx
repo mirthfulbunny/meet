@@ -6,6 +6,7 @@ import {
 } from '@livekit/components-react';
 import { RoomEvent, Track } from 'livekit-client';
 import * as React from 'react';
+import { BarMenu } from './BarMenu';
 
 // Per-viewer tile hiding, saved in localStorage per room. A tile is one participant + source
 // (camera or screen share), so a screen share can be hidden without hiding the camera. Hidden
@@ -145,24 +146,9 @@ export function HideTileButton(props: { trackRef: TrackReferenceOrPlaceholder })
   );
 }
 
-export function HiddenTilesMenu() {
+export function HiddenTilesMenu(props: { showText: boolean }) {
   const hiddenTiles = React.useContext(HiddenTilesContext);
   const participants = useParticipants();
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!open) {
-      return;
-    }
-    const onMouseDown = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', onMouseDown);
-    return () => document.removeEventListener('mousedown', onMouseDown);
-  }, [open]);
 
   if (!hiddenTiles) {
     return null;
@@ -174,37 +160,38 @@ export function HiddenTilesMenu() {
       participants.find((p) => p.identity === identity)?.name || identity.replace(/__[^_]*$/, '');
     return source === Track.Source.ScreenShare ? `${name}'s screen` : name;
   };
+  const count = hiddenTiles.hidden.length;
 
   return (
-    <div ref={ref} className="hidden-tiles-menu">
-      {open && (
-        <div className="hidden-tiles-popup">
-          <label className="hidden-tiles-row">
-            <input
-              type="checkbox"
-              checked={hiddenTiles.hideNoVideo}
-              onChange={(e) => hiddenTiles.setHideNoVideo(e.target.checked)}
-            />
-            Hide people without video
-          </label>
-          {hiddenTiles.hidden.length === 0 ? (
-            <div className="hidden-tiles-empty">Nothing hidden. Hover a tile to hide it.</div>
-          ) : (
-            hiddenTiles.hidden.map((key) => (
-              <div className="hidden-tiles-row" key={key}>
-                <span>{label(key)}</span>
-                <button className="lk-button" onClick={() => hiddenTiles.unhide(key)}>
-                  Show
-                </button>
-              </div>
-            ))
-          )}
-        </div>
+    <BarMenu
+      title="Hidden tiles"
+      buttonContent={
+        <>
+          <EyeOffIcon />
+          {props.showText ? `Hidden (${count})` : count > 0 && count}
+        </>
+      }
+    >
+      <label className="bar-menu-row">
+        <input
+          type="checkbox"
+          checked={hiddenTiles.hideNoVideo}
+          onChange={(e) => hiddenTiles.setHideNoVideo(e.target.checked)}
+        />
+        Hide people without video
+      </label>
+      {count === 0 ? (
+        <div className="bar-menu-note">Nothing hidden. Hover a tile to hide it.</div>
+      ) : (
+        hiddenTiles.hidden.map((key) => (
+          <div className="bar-menu-row bar-menu-row-spread" key={key}>
+            <span>{label(key)}</span>
+            <button className="lk-button" onClick={() => hiddenTiles.unhide(key)}>
+              Show
+            </button>
+          </div>
+        ))
       )}
-      <button className="lk-button" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <EyeOffIcon />
-        Hidden ({hiddenTiles.hidden.length})
-      </button>
-    </div>
+    </BarMenu>
   );
 }

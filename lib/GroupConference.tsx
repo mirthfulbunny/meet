@@ -2,7 +2,6 @@ import {
   CarouselLayout,
   Chat,
   ConnectionStateToast,
-  ControlBar,
   FocusLayoutContainer,
   GridLayout,
   isTrackReference,
@@ -18,11 +17,13 @@ import {
 import { RoomEvent, Track } from 'livekit-client';
 import * as React from 'react';
 import { GroupTile } from './GroupTile';
-import { HiddenTilesMenu, HiddenTilesProvider, useHiddenTilesState } from './HiddenTiles';
+import { GroupControlBar } from './GroupControlBar';
+import { HiddenTilesProvider, useHiddenTilesState } from './HiddenTiles';
 import { isEqualTrackRef } from './trackRefs';
 
 // Local copy of components-react 2.9.24's <VideoConference> prefab, so we own the tile list
-// and the control bar. Changes from upstream: per-viewer tile hiding (see HiddenTiles.tsx).
+// and the control bar. Changes from upstream: per-viewer tile hiding (see HiddenTiles.tsx) and
+// our own control bar (GroupControlBar.tsx).
 
 export function GroupConference(props: {
   roomName: string;
@@ -126,9 +127,7 @@ export function GroupConference(props: {
                 </FocusLayoutContainer>
               </div>
             )}
-            <ControlBar controls={{ chat: true, settings: !!SettingsComponent }} />
-            {/* Floats over the bar's left edge until the custom control bar exists. */}
-            <HiddenTilesMenu />
+            <GroupControlBar showSettings={!!SettingsComponent} />
           </div>
           <Chat
             style={{ display: widgetState.showChat ? 'grid' : 'none' }}

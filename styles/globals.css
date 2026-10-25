@@ -81,20 +81,18 @@ h2 a {
   transition-delay: 0s;
 }
 
-.hidden-tiles-menu {
-  position: absolute;
-  left: 0.75rem;
-  bottom: 0;
-  height: var(--lk-control-bar-height);
+/* Control-bar popup menus (lib/BarMenu.tsx): screen-share settings, hidden tiles. */
+.bar-menu {
+  position: relative;
   display: flex;
-  align-items: center;
-  z-index: 10;
 }
 
-.hidden-tiles-popup {
+.bar-menu-popup {
   position: absolute;
-  left: 0;
-  bottom: calc(100% - 0.5rem);
+  bottom: calc(100% + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   min-width: 16rem;
   padding: 0.5rem;
   display: flex;
@@ -103,22 +101,32 @@ h2 a {
   background-color: var(--lk-bg2);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--lk-border-radius);
+  white-space: nowrap;
 }
 
-.hidden-tiles-row {
+.bar-menu-heading {
+  padding: 0.25rem 0.5rem 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.bar-menu-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
 }
 
-label.hidden-tiles-row {
-  justify-content: flex-start;
+label.bar-menu-row {
   cursor: pointer;
 }
 
-.hidden-tiles-empty {
+.bar-menu-row-spread {
+  justify-content: space-between;
+}
+
+.bar-menu-note {
   padding: 0.25rem 0.5rem;
   color: rgba(255, 255, 255, 0.6);
 }

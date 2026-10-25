@@ -220,7 +220,11 @@ function VideoConferenceComponent(props: {
   const lowPowerMode = useLowCPUOptimizer(room);
 
   const router = useRouter();
-  const handleOnLeave = React.useCallback(() => router.push('/'), [router]);
+  const roomName = props.connectionDetails.roomName;
+  const handleOnLeave = React.useCallback(
+    () => router.push(`/?room=${encodeURIComponent(roomName)}`),
+    [router, roomName],
+  );
   const handleError = React.useCallback((error: Error) => {
     console.error(error);
     alert(`Encountered an unexpected error, check the console logs for details: ${error.message}`);

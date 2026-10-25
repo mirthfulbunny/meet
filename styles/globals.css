@@ -66,10 +66,62 @@ h2 a {
   text-decoration: none;
 }
 
-/* Tile hiding (lib/HiddenTiles.tsx). Hide button mirrors the focus toggle, top-left. */
-.lk-participant-tile .lk-focus-toggle-button.hide-tile-button {
-  right: auto;
+/* Tile buttons (lib/GroupTile.tsx): hide and volume, top-left, mirroring the focus toggle.
+   Doubled class to outrank upstream's absolute positioning of .lk-focus-toggle-button. */
+.tile-actions {
+  position: absolute;
+  top: 0.25rem;
   left: 0.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.lk-participant-tile.lk-participant-tile .tile-actions .lk-focus-toggle-button {
+  position: static;
+}
+
+.tile-volume {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lk-participant-tile.lk-participant-tile .tile-volume .tile-volume-open {
+  opacity: 1;
+}
+
+.tile-volume-popup {
+  padding: 0.125rem 0.375rem 0.125rem 0.125rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: calc(var(--lk-border-radius) / 2);
+}
+
+/* Volume slider (lib/Volumes.tsx), in the tile popup and the Volume menu. */
+.volume-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.volume-slider .lk-button {
+  padding: 0.25rem;
+}
+
+.volume-slider input[type='range'] {
+  width: 8rem;
+  accent-color: var(--lk-accent-bg);
+}
+
+.volume-slider input.volume-slider-muted {
+  opacity: 0.4;
+}
+
+.volume-slider-value {
+  min-width: 3rem;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 /* Upstream's hover rule uses `transition-delay: 0` (unitless, so invalid and ignored), which
@@ -81,7 +133,7 @@ h2 a {
   transition-delay: 0s;
 }
 
-/* Control-bar popup menus (lib/BarMenu.tsx): screen-share settings, hidden tiles. */
+/* Control-bar popup menus (lib/BarMenu.tsx): screen-share settings, hidden tiles, volume. */
 .bar-menu {
   position: relative;
   display: flex;

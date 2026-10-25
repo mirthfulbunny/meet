@@ -24,10 +24,11 @@ import {
   ScreenShareSettings,
   useScreenShareSettings,
 } from './screenShare';
+import { VolumeMenu } from './Volumes';
 
 // Our control bar, based on components-react 2.9.24's <ControlBar> prefab. Changes: the
 // screen-share toggle passes our capture/publish options (replacing the old monkeypatch) and
-// has a quality/encoder menu, and the "Hidden" tiles menu lives here.
+// has a quality/encoder menu, and the "Hidden" tiles and "Volume" menus live here.
 
 // Not exported from components-react; mirrors its internal mapping.
 const trackSourceToProtocol = (source: Track.Source) => {
@@ -62,8 +63,8 @@ function supportsScreenSharing() {
 export function GroupControlBar(props: { showSettings: boolean }) {
   const layoutContext = useMaybeLayoutContext();
   const isChatOpen = !!layoutContext?.widget.state?.showChat;
-  // Upstream uses 1000/760; ours has two more controls.
-  const isTooLittleSpace = useMediaQuery(`(max-width: ${isChatOpen ? 1100 : 860}px)`);
+  // Upstream uses 1000/760; ours has three more controls.
+  const isTooLittleSpace = useMediaQuery(`(max-width: ${isChatOpen ? 1200 : 960}px)`);
   const showText = !isTooLittleSpace;
 
   const permissions = useLocalParticipantPermissions();
@@ -176,6 +177,7 @@ export function GroupControlBar(props: { showSettings: boolean }) {
           {showText && 'Settings'}
         </button>
       )}
+      <VolumeMenu showText={showText} />
       <HiddenTilesMenu showText={showText} />
       <DisconnectButton>
         <LeaveIcon />

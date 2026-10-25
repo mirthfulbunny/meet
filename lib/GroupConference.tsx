@@ -20,10 +20,11 @@ import { GroupTile } from './GroupTile';
 import { GroupControlBar } from './GroupControlBar';
 import { HiddenTilesProvider, useHiddenTilesState } from './HiddenTiles';
 import { isEqualTrackRef } from './trackRefs';
+import { useVolumesState, VolumesProvider } from './Volumes';
 
 // Local copy of components-react 2.9.24's <VideoConference> prefab, so we own the tile list
-// and the control bar. Changes from upstream: per-viewer tile hiding (see HiddenTiles.tsx) and
-// our own control bar (GroupControlBar.tsx).
+// and the control bar. Changes from upstream: per-viewer tile hiding (see HiddenTiles.tsx),
+// per-viewer volume (Volumes.tsx) and our own control bar (GroupControlBar.tsx).
 
 export function GroupConference(props: {
   roomName: string;
@@ -38,6 +39,7 @@ export function GroupConference(props: {
   });
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
   const hiddenTiles = useHiddenTilesState(props.roomName);
+  const volumes = useVolumesState();
 
   const allTracks = useTracks(
     [
@@ -109,39 +111,41 @@ export function GroupConference(props: {
   return (
     <div className="lk-video-conference">
       <HiddenTilesProvider value={hiddenTiles}>
-        <LayoutContextProvider value={layoutContext} onWidgetChange={setWidgetState}>
-          <div className="lk-video-conference-inner">
-            {!focusTrack ? (
-              <div className="lk-grid-layout-wrapper">
-                <GridLayout tracks={tracks}>
-                  <GroupTile />
-                </GridLayout>
-              </div>
-            ) : (
-              <div className="lk-focus-layout-wrapper">
-                <FocusLayoutContainer>
-                  <CarouselLayout tracks={carouselTracks}>
+        <VolumesProvider value={volumes}>
+          <LayoutContextProvider value={layoutContext} onWidgetChange={setWidgetState}>
+            <div className="lk-video-conference-inner">
+              {!focusTrack ? (
+                <div className="lk-grid-layout-wrapper">
+                  <GridLayout tracks={tracks}>
                     <GroupTile />
-                  </CarouselLayout>
-                  <GroupTile trackRef={focusTrack} />
-                </FocusLayoutContainer>
+                  </GridLayout>
+                </div>
+              ) : (
+                <div className="lk-focus-layout-wrapper">
+                  <FocusLayoutContainer>
+                    <CarouselLayout tracks={carouselTracks}>
+                      <GroupTile />
+                    </CarouselLayout>
+                    <GroupTile trackRef={focusTrack} />
+                  </FocusLayoutContainer>
+                </div>
+              )}
+              <GroupControlBar showSettings={!!SettingsComponent} />
+            </div>
+            <Chat
+              style={{ display: widgetState.showChat ? 'grid' : 'none' }}
+              messageFormatter={chatMessageFormatter}
+            />
+            {SettingsComponent && (
+              <div
+                className="lk-settings-menu-modal"
+                style={{ display: widgetState.showSettings ? 'block' : 'none' }}
+              >
+                <SettingsComponent />
               </div>
             )}
-            <GroupControlBar showSettings={!!SettingsComponent} />
-          </div>
-          <Chat
-            style={{ display: widgetState.showChat ? 'grid' : 'none' }}
-            messageFormatter={chatMessageFormatter}
-          />
-          {SettingsComponent && (
-            <div
-              className="lk-settings-menu-modal"
-              style={{ display: widgetState.showSettings ? 'block' : 'none' }}
-            >
-              <SettingsComponent />
-            </div>
-          )}
-        </LayoutContextProvider>
+          </LayoutContextProvider>
+        </VolumesProvider>
       </HiddenTilesProvider>
       <RoomAudioRenderer />
       <ConnectionStateToast />

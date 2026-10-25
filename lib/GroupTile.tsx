@@ -18,8 +18,9 @@ import { Track } from 'livekit-client';
 import * as React from 'react';
 import { HideTileButton } from './HiddenTiles';
 import { isEqualTrackRef } from './trackRefs';
+import { TileVolumeButton } from './Volumes';
 
-// <ParticipantTile> plus a hide button. Passing children replaces the tile's default contents,
+// <ParticipantTile> plus hide and volume buttons. Passing children replaces the tile's default contents,
 // so those are copied here from components-react 2.9.24.
 export function GroupTile(props: { trackRef?: TrackReferenceOrPlaceholder }) {
   return (
@@ -85,7 +86,10 @@ function TileContents() {
         </div>
         <ConnectionQualityIndicator className="lk-participant-metadata-item" />
       </div>
-      <HideTileButton trackRef={trackReference} />
+      <div className="tile-actions">
+        <HideTileButton trackRef={trackReference} />
+        <TileVolumeButton trackRef={trackReference} />
+      </div>
     </>
   );
 }

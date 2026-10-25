@@ -65,3 +65,60 @@ h2 a {
 h2 a {
   text-decoration: none;
 }
+
+/* Tile hiding (lib/HiddenTiles.tsx). Hide button mirrors the focus toggle, top-left. */
+.lk-participant-tile .lk-focus-toggle-button.hide-tile-button {
+  right: auto;
+  left: 0.25rem;
+}
+
+/* Upstream's hover rule uses `transition-delay: 0` (unitless, so invalid and ignored), which
+   leaves its 0.2s delay plus 0.2s fade on hover. Show tile buttons immediately instead.
+   Doubled class to outrank the upstream rule, which loads after this file. */
+.lk-participant-tile.lk-participant-tile:hover .lk-focus-toggle-button,
+.lk-participant-tile.lk-participant-tile:focus .lk-focus-toggle-button {
+  transition-duration: 0.1s;
+  transition-delay: 0s;
+}
+
+.hidden-tiles-menu {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0;
+  height: var(--lk-control-bar-height);
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.hidden-tiles-popup {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 0.5rem);
+  min-width: 16rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background-color: var(--lk-bg2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--lk-border-radius);
+}
+
+.hidden-tiles-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+}
+
+label.hidden-tiles-row {
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.hidden-tiles-empty {
+  padding: 0.25rem 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+}
